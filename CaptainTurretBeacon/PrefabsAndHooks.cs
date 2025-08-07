@@ -6,6 +6,8 @@ using UnityEngine.AddressableAssets;
 using On.EntityStates.Bandit2.Weapon;
 using System;
 using System.Collections;
+using System.Linq;
+using UnityEngine.Networking;
 
 namespace CaptainTurretBeacon
 {
@@ -305,45 +307,60 @@ namespace CaptainTurretBeacon
 
     public class CaptainTurretIdentifier : MonoBehaviour
     {
-        public CharacterMaster master;
-        public CharacterMaster captain;
-        public Deployable deployableComponent;
-        public CharacterBody body;
+        public CharacterMaster turretMaster;
+        public CharacterMaster captainMaster;
+        public Deployable turretDeployableComponent;
+        public CharacterBody turretBody;
+        public bool hasGodmode = true;
 
         public void Start()
         {
-            master = GetComponent<CharacterMaster>();
-            deployableComponent = GetComponent<Deployable>();
-            if (deployableComponent)
+            turretMaster = GetComponent<CharacterMaster>();
+            turretDeployableComponent = GetComponent<Deployable>();
+            if (turretDeployableComponent)
             {
-                captain = deployableComponent.ownerMaster;
+                captainMaster = turretDeployableComponent.ownerMaster;
             }
-
         }
 
         public void FixedUpdate()
         {
-            if (body == null && master != null)
+            if (turretBody == null && turretMaster != null)
             {
-                body = master.GetBody();
+                turretBody = turretMaster.GetBody();
             }
 
-            if (body)
+            if (turretBody)
             {
-                var inventory = body.inventory;
+                var inventory = turretBody.inventory;
                 if (inventory)
                 {
                     inventory.RemoveItem(RoR2Content.Items.Mushroom, inventory.GetItemCount(RoR2Content.Items.Mushroom));
                 }
 
-                var healthComponent = body.healthComponent;
+                var healthComponent = turretBody.healthComponent;
                 if (!healthComponent)
                 {
                     return;
                 }
 
-                healthComponent.godMode = true;
-                healthComponent.isDefaultGodMode = true;
+                healthComponent.godMode = hasGodmode;
+                healthComponent.isDefaultGodMode = hasGodmode;
+            }
+
+            if (NetworkServer.active && captainMaster.deployablesList != null)
+            {
+                var turretList = captainMaster.deployablesList.Where(x => x.slot == DeployableSlot.EngiTurret).ToList();
+                var maxBeacons = captainMaster.GetDeployableSameSlotLimit(DeployableSlot.CaptainSupplyDrop);
+
+                if (turretList.Count >= maxBeacons)
+                {
+                    hasGodmode = false;
+                    captainMaster.deployablesList.Remove(kurwa mac pizda jego jebana);
+                    turretDeployableComponent.ownerMaster = null;
+                    turretDeployableComponent.onUndeploy.Invoke();
+                    //turretMaster.TrueKill();
+                }
             }
         }
     }
