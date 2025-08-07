@@ -349,21 +349,25 @@ namespace CaptainTurretBeacon
                 healthComponent.isDefaultGodMode = hasGodmode;
             }
 
+            var maxBeacons = captainMaster.GetDeployableSameSlotLimit(DeployableSlot.CaptainSupplyDrop);
+
             if (NetworkServer.active && captainMaster.deployablesList != null)
             {
                 var turretList = captainMaster.deployablesList.Where(x => x.slot == DeployableSlot.EngiTurret).ToList();
-                var maxBeacons = captainMaster.GetDeployableSameSlotLimit(DeployableSlot.CaptainSupplyDrop);
+                // this is always equal to 1. what the fuck.
 
-                if (turretList.Count >= maxBeacons)
+                Main.ctbLogger.LogError("turretList count is " + turretList.Count);
+                Main.ctbLogger.LogError("turretList.Any()? " + turretList.Any());
+                Main.ctbLogger.LogError("turretList.First().deployable?.gameObject? " + turretList.First().deployable?.gameObject);
+
+                if (turretList.Count >= maxBeacons && turretList.Any() && turretList.First().deployable?.gameObject == this.gameObject)
                 {
+                    Main.ctbLogger.LogError("setting hasGodmode to false");
                     hasGodmode = false;
-                    // List<DeployableInfo> fucker = new() { turretList[0] };
-                    // captainMaster.deployablesList.Except(fucker);
-                    // idea was to remove the oldest turret from both lists, but it just results in the turrets instantly dying, as if turretList.Count >= maxBeacons was always true...
-                    turretList.RemoveAt(0);
-                    turretDeployableComponent.ownerMaster = null;
-                    turretDeployableComponent.onUndeploy.Invoke();
-                    //turretMaster.TrueKill();
+                    turretDeployableComponent.OnDestroy();
+                    // turretDeployableComponent.ownerMaster = null;
+                    // turretDeployableComponent.onUndeploy.Invoke();
+                    turretMaster.TrueKill();
                 }
             }
         }
