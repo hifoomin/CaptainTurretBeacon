@@ -1,0 +1,10 @@
+/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/bin/Debug/netstandard2.1/CaptainTurretBeacon.deps.json
+/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/bin/Debug/netstandard2.1/CaptainTurretBeacon.dll
+/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/bin/Debug/netstandard2.1/CaptainTurretBeacon.pdb
+/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/obj/Debug/netstandard2.1/CaptainTurretBeacon.csproj.AssemblyReference.cache
+/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/obj/Debug/netstandard2.1/CaptainTurretBeacon.GeneratedMSBuildEditorConfig.editorconfig
+/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/obj/Debug/netstandard2.1/CaptainTurretBeacon.AssemblyInfoInputs.cache
+/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/obj/Debug/netstandard2.1/CaptainTurretBeacon.AssemblyInfo.cs
+/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/obj/Debug/netstandard2.1/CaptainTurretBeacon.csproj.CoreCompileInputs.cache
+/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/obj/Debug/netstandard2.1/CaptainTurretBeacon.dll
+/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/obj/Debug/netstandard2.1/CaptainTurretBeacon.pdb

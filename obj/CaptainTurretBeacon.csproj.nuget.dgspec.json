@@ -1,0 +1,109 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/CaptainTurretBeacon.csproj": {}
+  },
+  "projects": {
+    "/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/CaptainTurretBeacon.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/CaptainTurretBeacon.csproj",
+        "projectName": "CaptainTurretBeacon",
+        "projectPath": "/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/CaptainTurretBeacon.csproj",
+        "packagesPath": "/home/hifu/.nuget/packages/",
+        "outputPath": "/home/hifu/git/CaptainTurretBeacon/CaptainTurretBeacon/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/hifu/git/CaptainTurretBeacon/nuget.config",
+          "/home/hifu/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.bepinex.dev/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "dependencies": {
+            "BepInEx.Analyzers": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.*, )"
+            },
+            "BepInEx.Core": {
+              "target": "Package",
+              "version": "[5.4.21, )"
+            },
+            "MMHOOK.RoR2": {
+              "target": "Package",
+              "version": "[*-*, )",
+              "noWarn": [
+                "NU1701"
+              ]
+            },
+            "R2API.ContentManagement": {
+              "target": "Package",
+              "version": "[1.0.10, )"
+            },
+            "R2API.Language": {
+              "target": "Package",
+              "version": "[1.0.*, )"
+            },
+            "R2API.Prefab": {
+              "target": "Package",
+              "version": "[*-*, )"
+            },
+            "RiskOfRain2.GameLibs": {
+              "target": "Package",
+              "version": "[1.3.9-r.0, )"
+            },
+            "UnityEngine.Modules": {
+              "include": "Compile",
+              "target": "Package",
+              "version": "[2021.3.33, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.105/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
