@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine.Networking;
+using System.Collections.Generic;
 
 namespace CaptainTurretBeacon
 {
@@ -356,7 +357,10 @@ namespace CaptainTurretBeacon
                 if (turretList.Count >= maxBeacons)
                 {
                     hasGodmode = false;
-                    captainMaster.deployablesList.Remove(kurwa mac pizda jego jebana);
+                    // List<DeployableInfo> fucker = new() { turretList[0] };
+                    // captainMaster.deployablesList.Except(fucker);
+                    // idea was to remove the oldest turret from both lists, but it just results in the turrets instantly dying, as if turretList.Count >= maxBeacons was always true...
+                    turretList.RemoveAt(0);
                     turretDeployableComponent.ownerMaster = null;
                     turretDeployableComponent.onUndeploy.Invoke();
                     //turretMaster.TrueKill();
