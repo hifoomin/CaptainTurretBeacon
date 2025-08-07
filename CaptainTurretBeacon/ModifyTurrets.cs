@@ -8,8 +8,9 @@ namespace CaptainTurretBeacon
     public class ModifyTurrets : MonoBehaviour
     {
         public CharacterMaster master;
-        public int beaconLimit;
-        public List<GameObject> turrets = new();
+        // public int beaconLimit;
+        public List<int> turretIndicesToRemoveList = new();
+        public List<CharacterMaster> turrets = new();
 
         public void Start()
         {
@@ -24,12 +25,30 @@ namespace CaptainTurretBeacon
                 return;
             }
 
-            beaconLimit = master.GetDeployableSameSlotLimit(DeployableSlot.CaptainSupplyDrop);
+            // beaconLimit = master.GetDeployableSameSlotLimit(DeployableSlot.CaptainSupplyDrop);
+            HandleRemovingExtraTurrets();
             HandleTurretBlacklistAndGodmode();
+        }
+
+        public void HandleRemovingExtraTurrets()
+        {
+            var maxBeacons = master.GetDeployableSameSlotLimit(DeployableSlot.CaptainSupplyDrop);
+
+            if (turrets.Count >= maxBeacons)
+            {
+                turrets[0].minionOwnership.ownerMaster = null;
+                turrets[0].TrueKill();
+                turrets.RemoveAt(0);
+            }
+            turrets[0].minionOwnership.ownerMaster = null;
+            turrets[0].TrueKill();
         }
 
         public void HandleTurretBlacklistAndGodmode()
         {
+            var turretList = master.deployablesList.Where(x => x.slot == DeployableSlot.EngiTurret).ToList();
+            var maxBeacons = master.GetDeployableSameSlotLimit(DeployableSlot.CaptainSupplyDrop);
+
             if (master.deployablesList == null)
             {
                 return;
@@ -49,10 +68,44 @@ namespace CaptainTurretBeacon
                     continue;
                 }
 
-                if (!turrets.Contains(deployable.gameObject))
+                /*
+                if (turretList.Count >= maxBeacons)
                 {
-                    turrets.Add(deployable.gameObject);
+                    for (int j = turretList.Count - maxBeacons; j >= 0; j--)
+                    {
+                        master.deployablesList.Remove(j);
+                        deployable.ownerMaster = null;
+                        deployable.onUndeploy.Invoke();
+                        deployableMaster.TrueKill();
+                        // possible error: Collection was modified; enumeration operation may not execute?
+                    }
                 }
+                */
+
+                var extraTurrets = turretList.Count - maxBeacons;
+                var index = master.deployablesList.Count - 1;
+                while (extraTurrets > 0 || index >= 0)
+                {
+                    // if (master.deployablesList[i] == turret) if deployable slot is equal to engiturret? or do I NEED a horrible gameobject reference because deployable is garbage and minionownership is garbage and captain spaghetti code is garbage
+                    {
+                        // deployableMaster.TrueKill();
+                        deployable.ownerMaster = null;
+                        deployable.onUndeploy.Invoke();
+                        // turretIndicesToRemoveList.Add(index);
+                        extraTurrets--;
+                    }
+                    index--;
+                }
+                /*
+                for (int j = turretIndicesToRemoveList.Count - 1; j >= 0; j--)
+                {
+                    deployable.ownerMaster = null;
+                    deployable.onUndeploy.Invoke();
+                    turretIndicesToRemoveList.RemoveAt(j);
+                }
+
+                turretIndicesToRemoveList.Clear();
+                */
 
                 if (deployable.TryGetComponent<CharacterMaster>(out var deployableMaster))
                 {
@@ -63,19 +116,6 @@ namespace CaptainTurretBeacon
                     }
 
                     var inventory = deployableBody.inventory;
-                    if (inventory)
-                    {
-                        inventory.RemoveItem(RoR2Content.Items.Mushroom, inventory.GetItemCount(RoR2Content.Items.Mushroom));
-                    }
-
-                    var healthComponent = deployableBody.healthComponent;
-                    if (!healthComponent)
-                    {
-                        continue;
-                    }
-
-                    healthComponent.godMode = true;
-                    healthComponent.isDefaultGodMode = true;
 
                 }
             }

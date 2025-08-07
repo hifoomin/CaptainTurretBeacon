@@ -134,8 +134,8 @@ namespace CaptainTurretBeacon
             SetUpVFX();
 
             On.RoR2.BodyCatalog.Init += OnBodyCatalogInit;
-            CharacterBody.onBodyStartGlobal += OnBodyStart;
-            CharacterMaster.onStartGlobal += OnMasterStart;
+            // CharacterBody.onBodyStartGlobal += OnBodyStart;
+            // CharacterMaster.onStartGlobal += OnMasterStart;
         }
 
         private static void OnMasterStart(CharacterMaster master)
@@ -143,7 +143,7 @@ namespace CaptainTurretBeacon
             var modifyTurrets = master.GetComponent<ModifyTurrets>();
             if (modifyTurrets)
             {
-                
+
             }
             var limit = master.GetDeployableSameSlotLimit(DeployableSlot.CaptainSupplyDrop);
             if (master.GetComponent<CaptainTurretIdentifier>())
@@ -305,6 +305,46 @@ namespace CaptainTurretBeacon
 
     public class CaptainTurretIdentifier : MonoBehaviour
     {
-        bool a = false;
+        public CharacterMaster master;
+        public CharacterMaster captain;
+        public Deployable deployableComponent;
+        public CharacterBody body;
+
+        public void Start()
+        {
+            master = GetComponent<CharacterMaster>();
+            deployableComponent = GetComponent<Deployable>();
+            if (deployableComponent)
+            {
+                captain = deployableComponent.ownerMaster;
+            }
+
+        }
+
+        public void FixedUpdate()
+        {
+            if (body == null && master != null)
+            {
+                body = master.GetBody();
+            }
+
+            if (body)
+            {
+                var inventory = body.inventory;
+                if (inventory)
+                {
+                    inventory.RemoveItem(RoR2Content.Items.Mushroom, inventory.GetItemCount(RoR2Content.Items.Mushroom));
+                }
+
+                var healthComponent = body.healthComponent;
+                if (!healthComponent)
+                {
+                    return;
+                }
+
+                healthComponent.godMode = true;
+                healthComponent.isDefaultGodMode = true;
+            }
+        }
     }
 }
