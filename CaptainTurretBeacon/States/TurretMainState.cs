@@ -32,7 +32,11 @@ namespace CaptainTurretBeacon
                     var ownerBody = owner.GetComponent<CharacterBody>();
                     if (ownerBody)
                     {
-                        ownerBody.SendConstructTurret(ownerBody, finalPosition, interactionComponent.transform.rotation, MasterCatalog.FindMasterIndex(Prefabs.turretMasterPrefab));
+                        if (ownerBody.TryGetComponent<HopooGames>(out var hopooGames) && isAuthority)
+                        {
+                            hopooGames.HandleCreateTurret(ownerBody, finalPosition, interactionComponent.transform.rotation, MasterCatalog.FindMasterIndex(Prefabs.turretMasterPrefab));
+                        }
+
                         enableRadiusIndicator = true;
                     }
                 }
@@ -69,4 +73,63 @@ namespace CaptainTurretBeacon
             base.OnExit();
         }
     }
+    /*
+    public class StupidFuck : MonoBehaviour
+    {
+        public Deployable beaconDeployable;
+        public CharacterBody captainBody;
+        public HopooGames hopooGamesTurret;
+        public void Start()
+        {
+            beaconDeployable = GetComponent<Deployable>();
+            if (!beaconDeployable)
+            {
+                return;
+            }
+
+            var captainMaster = beaconDeployable.ownerMaster;
+            if (!captainMaster)
+            {
+                return;
+            }
+
+            captainBody = captainMaster.GetBody();
+            if (!captainBody)
+            {
+                return;
+            }
+
+            hopooGamesTurret = captainBody.GetComponent<HopooGames>();
+        }
+
+        public void OnDisable()
+        {
+            Fuck();
+        }
+
+        public void OnDestroy()
+        {
+            Fuck();
+        }
+
+        public void Fuck()
+        {
+            if (hopooGamesTurret && hopooGamesTurret.turretMaster)
+            {
+                var turretBody = hopooGamesTurret.turretMaster.GetBody();
+                if (turretBody)
+                {
+                    var healthComponent = turretBody.healthComponent;
+                    if (healthComponent)
+                    {
+                        healthComponent.godMode = false;
+                        healthComponent.isDefaultGodMode = false;
+                    }
+                }
+
+                hopooGamesTurret.turretMaster.TrueKill();
+            }
+        }
+    }
+    */
 }

@@ -26,6 +26,10 @@ namespace CaptainTurretBeacon
         public static BodyIndex captainBodyIndex;
         public static void Init()
         {
+            var captainMasterPrefab = Addressables.LoadAssetAsync<GameObject>("2e38a50898e5bc249b2c13f15d9825ca").WaitForCompletion();
+            captainMasterPrefab.AddComponent<HopooGames>();
+            // guid is captain body
+
             beaconPrefab = PrefabAPI.InstantiateClone(Addressables.LoadAssetAsync<GameObject>("7eaa9cf9fa18c374ab0c0acc09db93a2").WaitForCompletion(), "Captain Turret Beacon", true);
             // guid is captain supply drop, healing
             var genericDisplayNameProvider = beaconPrefab.GetComponent<GenericDisplayNameProvider>();
@@ -43,6 +47,8 @@ namespace CaptainTurretBeacon
             // guid is mat captain supply drop healing
 
             beaconMr.material = newBeaconMaterial;
+
+            // beaconPrefab.AddComponent<StupidFuck>();
 
             PrefabAPI.RegisterNetworkPrefab(beaconPrefab);
             ContentAddition.AddNetworkedObject(beaconPrefab);
@@ -74,7 +80,7 @@ namespace CaptainTurretBeacon
 
             genericSkill._skillFamily = newPrimarySkillFamily;
 
-            // TODO characterBody.portraitIcon = ;
+            characterBody.portraitIcon = Main.bundle.LoadAsset<Texture2D>("texCaptainTurretPortait.png");
 
             var redRamp = Addressables.LoadAssetAsync<Texture2D>("d67c887632cd1704ebe3a19486dbe843").WaitForCompletion();
             // guid is 
@@ -127,8 +133,6 @@ namespace CaptainTurretBeacon
             turretMasterPrefab = PrefabAPI.InstantiateClone(Addressables.LoadAssetAsync<GameObject>("ab6d27c997dd03546bcb6f3176059eba").WaitForCompletion(), "Captain Turret Master", true);
             // guid is stationary engi turret master
 
-            turretMasterPrefab.AddComponent<CaptainTurretIdentifier>();
-
             var characterMaster = turretMasterPrefab.GetComponent<CharacterMaster>();
             characterMaster.bodyPrefab = turretBodyPrefab;
 
@@ -141,37 +145,11 @@ namespace CaptainTurretBeacon
             // CharacterMaster.onStartGlobal += OnMasterStart;
         }
 
-        private static void OnMasterStart(CharacterMaster master)
-        {
-            var modifyTurrets = master.GetComponent<ModifyTurrets>();
-            if (modifyTurrets)
-            {
-
-            }
-            var limit = master.GetDeployableSameSlotLimit(DeployableSlot.CaptainSupplyDrop);
-            if (master.GetComponent<CaptainTurretIdentifier>())
-            {
-                master.TrueKill();
-            }
-        }
-
         private static IEnumerator OnBodyCatalogInit(On.RoR2.BodyCatalog.orig_Init orig)
         {
             yield return orig();
             captainBodyIndex = BodyCatalog.FindBodyIndex("CaptainBody(Clone)");
             // Main.ctbLogger.LogError("captain body index is " + captainBodyIndex);
-        }
-
-        private static void OnBodyStart(CharacterBody body)
-        {
-            if (body.bodyIndex == captainBodyIndex && body.GetComponent<ModifyTurrets>() == null)
-            {
-                var master = body.master;
-                if (master)
-                {
-                    master.gameObject.AddComponent<ModifyTurrets>();
-                }
-            }
         }
 
         public static void SetUpVFX()
@@ -303,73 +281,6 @@ namespace CaptainTurretBeacon
 
             // guid is impact engi turret
             ContentAddition.AddEffect(impactPrefab);
-        }
-    }
-
-    public class CaptainTurretIdentifier : MonoBehaviour
-    {
-        public CharacterMaster turretMaster;
-        public CharacterMaster captainMaster;
-        public Deployable turretDeployableComponent;
-        public CharacterBody turretBody;
-        public bool hasGodmode = true;
-
-        public void Start()
-        {
-            turretMaster = GetComponent<CharacterMaster>();
-            turretDeployableComponent = GetComponent<Deployable>();
-            if (turretDeployableComponent)
-            {
-                captainMaster = turretDeployableComponent.ownerMaster;
-            }
-        }
-
-        public void FixedUpdate()
-        {
-            if (turretBody == null && turretMaster != null)
-            {
-                turretBody = turretMaster.GetBody();
-            }
-
-            if (turretBody)
-            {
-                var inventory = turretBody.inventory;
-                if (inventory)
-                {
-                    inventory.RemoveItem(RoR2Content.Items.Mushroom, inventory.GetItemCount(RoR2Content.Items.Mushroom));
-                }
-
-                var healthComponent = turretBody.healthComponent;
-                if (!healthComponent)
-                {
-                    return;
-                }
-
-                healthComponent.godMode = hasGodmode;
-                healthComponent.isDefaultGodMode = hasGodmode;
-            }
-
-            var maxBeacons = captainMaster.GetDeployableSameSlotLimit(DeployableSlot.CaptainSupplyDrop);
-
-            if (NetworkServer.active && captainMaster.deployablesList != null)
-            {
-                var turretList = captainMaster.deployablesList.Where(x => x.slot == DeployableSlot.EngiTurret).ToList();
-                // this is always equal to 1. what the fuck.
-
-                Main.ctbLogger.LogError("turretList count is " + turretList.Count);
-                Main.ctbLogger.LogError("turretList.Any()? " + turretList.Any());
-                Main.ctbLogger.LogError("turretList.First().deployable?.gameObject? " + turretList.First().deployable?.gameObject);
-
-                if (turretList.Count >= maxBeacons && turretList.Any() && turretList.First().deployable?.gameObject == this.gameObject)
-                {
-                    Main.ctbLogger.LogError("setting hasGodmode to false");
-                    hasGodmode = false;
-                    turretDeployableComponent.OnDestroy();
-                    // turretDeployableComponent.ownerMaster = null;
-                    // turretDeployableComponent.onUndeploy.Invoke();
-                    turretMaster.TrueKill();
-                }
-            }
         }
     }
 }
