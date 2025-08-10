@@ -330,5 +330,7 @@ ASALocalRun/
 .mfractor/
 
 # weaver stuff
-NetworkWeaver/
-networkweaverlibs/
+NetworkWeaver/*
+networkweaverlibs/*
+libs/*
+Thunderstore/*
