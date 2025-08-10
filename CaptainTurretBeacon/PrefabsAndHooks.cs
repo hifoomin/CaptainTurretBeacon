@@ -64,8 +64,8 @@ namespace CaptainTurretBeacon
 
             var characterBody = turretBodyPrefab.GetComponent<CharacterBody>();
             characterBody.baseNameToken = "CAPTAIN_TURRET_NAME";
-            characterBody.baseDamage = 8f; // base is 16
-            characterBody.levelDamage = 1.6f; // base is 3.2
+            characterBody.baseDamage = 9.6f; // base is 16, so this is 60% of that
+            characterBody.levelDamage = 1.92f; // base is 3.2, so this is 60% of that
 
             var healthComponent = turretBodyPrefab.GetComponent<HealthComponent>();
             healthComponent.isDefaultGodMode = true;
@@ -100,7 +100,6 @@ namespace CaptainTurretBeacon
 
             var modelTransform = turretBodyPrefab.GetComponent<ModelLocator>()._modelTransform;
 
-            /*
             var hurtBoxGroup = modelTransform.GetComponent<HurtBoxGroup>();
             var firstHurtBox = hurtBoxGroup.hurtBoxes[0];
             var secondHurtBox = hurtBoxGroup.hurtBoxes[1];
@@ -115,10 +114,10 @@ namespace CaptainTurretBeacon
             hurtBoxGroup.mainHurtBox = null;
 
             UnityEngine.Object.Destroy(modelTransform.GetComponent<HurtBoxGroup>());
-            */
 
             // remove hurtboxes to prevent ai from targetting it 
             // fucking nevermind, ai gets stunlocked from targetting it when getting attacked, but not being able to actually target it
+            // needs to be fixed with a terrible hook in BaseAI.OnBodyDamaged
 
             // var engiTurretMesh = Addressables.LoadAssetAsync<Mesh>("RoR2/Base/Engi/mdlEngiTurret.fbx").WaitForCompletion();
             // var engiTurretMesh = Addressables.LoadAssetAsync<Mesh>("RoR2/Base/Engi/EngiTurret/EngiTurretMesh.asset").WaitForCompletion();
@@ -167,8 +166,19 @@ namespace CaptainTurretBeacon
             SetUpVFX();
 
             On.RoR2.BodyCatalog.Init += OnBodyCatalogInit;
+            On.RoR2.CharacterAI.BaseAI.OnBodyDamaged += OnAIDamaged;
             // CharacterBody.onBodyStartGlobal += OnBodyStart;
             // CharacterMaster.onStartGlobal += OnMasterStart;
+        }
+
+        private static void OnAIDamaged(On.RoR2.CharacterAI.BaseAI.orig_OnBodyDamaged orig, RoR2.CharacterAI.BaseAI self, DamageReport damageReport)
+        {
+            if (self.currentEnemy.characterBody && self.currentEnemy.characterBody.baseNameToken == "CAPTAIN_TURRET_NAME")
+            {
+                self.currentEnemy.Reset();
+                return;
+            }
+            orig(self, damageReport);
         }
 
         private static IEnumerator OnBodyCatalogInit(On.RoR2.BodyCatalog.orig_Init orig)
