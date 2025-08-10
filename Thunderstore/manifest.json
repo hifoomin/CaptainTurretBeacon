@@ -1,12 +1,13 @@
 ﻿{
-	"name": "MyFirstMod",
+	"name": "CaptainTurretBeacon",
 	"version_number": "1.0.0",
 	"website_url": "",
-	"description": "My first Mod",
+	"description": "Adds a Beacon to Captain that spawns an Engi-esque turret.",
 	"dependencies": [
-		"bbepis-BepInExPack-5.4.2108",
-		"RiskofThunder-HookGenPatcher-1.2.3",
-		"RiskofThunder-R2API_Items-1.0.1",
-		"RiskofThunder-R2API_Language-1.0.0"
+		"bbepis-BepInExPack-5.4.2120",
+		"RiskofThunder-HookGenPatcher-1.2.9",
+		"RiskofThunder-R2API_Language-1.0.1",
+		"RiskofThunder-R2API_Prefab-1.1.0",
+		"RiskofThunder-R2API_ContentManagement-1.0.10"
 	]
 }

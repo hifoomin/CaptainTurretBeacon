@@ -17,7 +17,7 @@ namespace CaptainTurretBeacon
             var skillDef = ScriptableObject.CreateInstance<SkillDef>();
 
             skillDef.skillName = "CaptainSupplyDropTurret";
-            skillDef.skillNameToken = Main.turretBeaconSkillNameToken;
+            skillDef.skillNameToken = "CAPTAIN_SUPPLY_TURRET_NAME";
             skillDef.skillDescriptionToken = "CAPTAIN_SUPPLY_TURRET_DESCRIPTION";
 
             skillDef.icon = Main.bundle.LoadAsset<Sprite>("texCaptainTurret.png");

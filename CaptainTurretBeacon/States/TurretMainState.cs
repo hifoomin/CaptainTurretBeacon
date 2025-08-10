@@ -25,7 +25,7 @@ namespace CaptainTurretBeacon
             base.OnEnter();
             hopooGames = outer.GetComponent<HopooGames>();
             var genericOwnership = outer.GetComponent<GenericOwnership>();
-            var finalPosition = interactionComponent.transform.position + new Vector3(0f, heightOffset, 0f);
+            var finalPosition = interactionComponent.transform.position + interactionComponent.transform.up * heightOffset;
             if (genericOwnership)
             {
                 var owner = genericOwnership.ownerObject;

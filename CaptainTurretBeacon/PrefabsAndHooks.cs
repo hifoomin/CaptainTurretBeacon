@@ -100,20 +100,25 @@ namespace CaptainTurretBeacon
 
             var modelTransform = turretBodyPrefab.GetComponent<ModelLocator>()._modelTransform;
 
+            /*
             var hurtBoxGroup = modelTransform.GetComponent<HurtBoxGroup>();
             var firstHurtBox = hurtBoxGroup.hurtBoxes[0];
-            var secondHurtBox = hurtBoxGroup.hurtBoxes[0];
+            var secondHurtBox = hurtBoxGroup.hurtBoxes[1];
 
             Array.Resize(ref hurtBoxGroup.hurtBoxes, 0);
 
             UnityEngine.Object.Destroy(firstHurtBox.GetComponent<HurtBox>());
+            UnityEngine.Object.Destroy(firstHurtBox.GetComponent<CapsuleCollider>());
             UnityEngine.Object.Destroy(secondHurtBox.GetComponent<HurtBox>());
+            UnityEngine.Object.Destroy(secondHurtBox.GetComponent<BoxCollider>());
 
             hurtBoxGroup.mainHurtBox = null;
 
             UnityEngine.Object.Destroy(modelTransform.GetComponent<HurtBoxGroup>());
+            */
 
             // remove hurtboxes to prevent ai from targetting it 
+            // fucking nevermind, ai gets stunlocked from targetting it when getting attacked, but not being able to actually target it
 
             // var engiTurretMesh = Addressables.LoadAssetAsync<Mesh>("RoR2/Base/Engi/mdlEngiTurret.fbx").WaitForCompletion();
             // var engiTurretMesh = Addressables.LoadAssetAsync<Mesh>("RoR2/Base/Engi/EngiTurret/EngiTurretMesh.asset").WaitForCompletion();

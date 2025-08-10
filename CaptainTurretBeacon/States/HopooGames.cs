@@ -10,7 +10,7 @@ namespace CaptainTurretBeacon
 {
     public class HopooGames : NetworkBehaviour
     {
-        [SyncVar]
+        // [SyncVar] -- doesn't need to be a syncvar
         public GameObject turretInstance;
 
         [Command]
@@ -58,6 +58,10 @@ namespace CaptainTurretBeacon
 
                 if (turretSummonBody)
                 {
+                    if (!turretSummonBody.HasBuff(RoR2Content.Buffs.Intangible))
+                    {
+                        turretSummonBody.AddBuff(RoR2Content.Buffs.Intangible);
+                    }
                     var turretSummonHealthComponent = turretSummonBody.healthComponent;
                     if (turretSummonHealthComponent)
                     {
@@ -84,14 +88,18 @@ namespace CaptainTurretBeacon
         {
             if (turretInstance)
             {
+                // Main.ctbLogger.LogError("found turret instance");
                 var turretInstanceMaster = turretInstance.GetComponent<CharacterMaster>();
+                // Main.ctbLogger.LogError("turret instance master is " + turretInstanceMaster);
                 var turretInstanceBody = turretInstanceMaster.GetBody();
 
                 if (turretInstanceBody)
                 {
+                    // Main.ctbLogger.LogError("found turret instance body");
                     var turretInstanceHealthComponent = turretInstanceBody.healthComponent;
                     if (turretInstanceHealthComponent)
                     {
+                        // Main.ctbLogger.LogError("found turret instance health component");
                         turretInstanceHealthComponent.godMode = false;
                         turretInstanceHealthComponent.isDefaultGodMode = false;
                     }
