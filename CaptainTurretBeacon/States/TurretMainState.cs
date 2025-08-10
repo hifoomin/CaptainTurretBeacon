@@ -14,6 +14,7 @@ namespace CaptainTurretBeacon
         public GameObject indicatorInstance;
         public CharacterBody ownerBody;
         public float heightOffset = 3.5f;
+        public HopooGames hopooGames;
         public override Interactability GetInteractability(Interactor activator)
         {
             return Interactability.Disabled;
@@ -22,6 +23,7 @@ namespace CaptainTurretBeacon
         public override void OnEnter()
         {
             base.OnEnter();
+            hopooGames = outer.GetComponent<HopooGames>();
             var genericOwnership = outer.GetComponent<GenericOwnership>();
             var finalPosition = interactionComponent.transform.position + new Vector3(0f, heightOffset, 0f);
             if (genericOwnership)
@@ -29,16 +31,12 @@ namespace CaptainTurretBeacon
                 var owner = genericOwnership.ownerObject;
                 if (owner)
                 {
-                    var ownerBody = owner.GetComponent<CharacterBody>();
-                    if (ownerBody)
+                    if (hopooGames && isAuthority)
                     {
-                        if (ownerBody.TryGetComponent<HopooGames>(out var hopooGames) && isAuthority)
-                        {
-                            hopooGames.HandleCreateTurret(ownerBody, finalPosition, interactionComponent.transform.rotation, MasterCatalog.FindMasterIndex(Prefabs.turretMasterPrefab));
-                        }
-
-                        enableRadiusIndicator = true;
+                        hopooGames.CmdSpawnTurret(owner, finalPosition, interactionComponent.transform.rotation);
                     }
+
+                    enableRadiusIndicator = true;
                 }
             }
         }

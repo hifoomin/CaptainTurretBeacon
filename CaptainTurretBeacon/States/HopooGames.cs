@@ -11,63 +11,92 @@ namespace CaptainTurretBeacon
     public class HopooGames : NetworkBehaviour
     {
         [SyncVar]
-        public List<CharacterMaster> turretMasters;
+        public GameObject turretInstance;
 
         [Command]
-        public void HandleCreateTurret(CharacterBody builderBody, Vector3 position, Quaternion rotation, MasterIndex turretMasterIndex)
+        public void CmdSpawnTurret(GameObject builder, Vector3 position, Quaternion rotation)
         {
+            if (!builder)
+            {
+                return;
+            }
+
+            var builderBody = builder.GetComponent<CharacterBody>();
             if (!builderBody)
             {
                 return;
             }
+
+            var turretMasterPrefab = GetMasterPrefab(FindMasterIndex(Prefabs.turretMasterPrefab));
+            if (!turretMasterPrefab)
+            {
+                return;
+            }
+
             var builderCharacterMaster = builderBody.master;
             if (builderCharacterMaster)
             {
+                KillTurretInstance();
+
                 var turretSummon = new MasterSummon
                 {
-                    masterPrefab = MasterCatalog.GetMasterPrefab(turretMasterIndex),
+                    masterPrefab = turretMasterPrefab,
                     position = position,
                     rotation = rotation,
-                    summonerBodyObject = builderBody.gameObject,
+                    summonerBodyObject = builder,
                     ignoreTeamMemberLimit = true,
                     inventoryToCopy = builderCharacterMaster.inventory
                 }.Perform();
 
-                var inventory = turretSummon.inventory;
-                if (inventory)
+                var turretSummonInventory = turretSummon.inventory;
+                if (turretSummonInventory)
                 {
-                    inventory.RemoveItem(RoR2Content.Items.Mushroom, inventory.GetItemCount(RoR2Content.Items.Mushroom));
+                    turretSummonInventory.RemoveItem(RoR2Content.Items.Mushroom, turretSummonInventory.GetItemCount(RoR2Content.Items.Mushroom));
                 }
 
-                turretMasters.Add(turretSummon);
+                var turretSummonBody = turretSummon.GetBody();
 
-                var turretBody = turretSummon.GetBody();
-
-                if (turretBody)
+                if (turretSummonBody)
                 {
-                    var healthComponent = turretBody.healthComponent;
-                    if (healthComponent)
+                    var turretSummonHealthComponent = turretSummonBody.healthComponent;
+                    if (turretSummonHealthComponent)
                     {
-                        healthComponent.godMode = true;
-                        healthComponent.isDefaultGodMode = true;
+                        turretSummonHealthComponent.godMode = true;
+                        turretSummonHealthComponent.isDefaultGodMode = true;
                     }
                 }
+                turretInstance = turretSummon.gameObject;
+            }
 
-                if (turretMasters.Count > builderCharacterMaster.GetDeployableSameSlotLimit(DeployableSlot.CaptainSupplyDrop))
+        }
+
+        public void OnDisable()
+        {
+            KillTurretInstance();
+        }
+
+        public void OnDestroy()
+        {
+            KillTurretInstance();
+        }
+
+        public void KillTurretInstance()
+        {
+            if (turretInstance)
+            {
+                var turretInstanceMaster = turretInstance.GetComponent<CharacterMaster>();
+                var turretInstanceBody = turretInstanceMaster.GetBody();
+
+                if (turretInstanceBody)
                 {
-                    var oldestTurretBody = turretMasters[0].GetBody();
-                    if (oldestTurretBody)
+                    var turretInstanceHealthComponent = turretInstanceBody.healthComponent;
+                    if (turretInstanceHealthComponent)
                     {
-                        var healthComponent = oldestTurretBody.healthComponent;
-                        if (healthComponent)
-                        {
-                            healthComponent.godMode = false;
-                            healthComponent.isDefaultGodMode = false;
-                        }
+                        turretInstanceHealthComponent.godMode = false;
+                        turretInstanceHealthComponent.isDefaultGodMode = false;
                     }
-                    turretMasters[0].TrueKill();
-                    turretMasters.RemoveAt(0);
                 }
+                turretInstanceMaster.TrueKill();
             }
         }
     }

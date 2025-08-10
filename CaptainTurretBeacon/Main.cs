@@ -68,6 +68,11 @@ namespace CaptainTurretBeacon
                 leftBeaconCooldown = beaconCooldown.Value;
             }
 
+            if (self.supplyDrop2Skill.skillNameToken == turretBeaconSkillNameToken)
+            {
+                rightBeaconCooldown = beaconCooldown.Value;
+            }
+
             if (self.supplyDrop1Skill.stock < self.supplyDrop1Skill.maxStock)
             {
                 leftBeaconStopwatch += Time.fixedDeltaTime;

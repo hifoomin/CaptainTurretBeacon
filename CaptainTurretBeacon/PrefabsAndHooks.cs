@@ -26,8 +26,13 @@ namespace CaptainTurretBeacon
         public static BodyIndex captainBodyIndex;
         public static void Init()
         {
-            var captainMasterPrefab = Addressables.LoadAssetAsync<GameObject>("2e38a50898e5bc249b2c13f15d9825ca").WaitForCompletion();
-            captainMasterPrefab.AddComponent<HopooGames>();
+            // var playerMaster = Addressables.LoadAssetAsync<GameObject>("5acc65dc41dfe5840a14db71ba004f72").WaitForCompletion();
+            // playerMaster.AddComponent<HopooGames>();
+            // guid is player master
+            // done for the edge case of respawning, where the list of turrets on the body component will get cleared, and you can have 4
+
+            // var captainMasterPrefab = Addressables.LoadAssetAsync<GameObject>("2e38a50898e5bc249b2c13f15d9825ca").WaitForCompletion();
+            // captainMasterPrefab.AddComponent<HopooGames>();
             // guid is captain body
 
             beaconPrefab = PrefabAPI.InstantiateClone(Addressables.LoadAssetAsync<GameObject>("7eaa9cf9fa18c374ab0c0acc09db93a2").WaitForCompletion(), "Captain Turret Beacon", true);
@@ -49,6 +54,7 @@ namespace CaptainTurretBeacon
             beaconMr.material = newBeaconMaterial;
 
             // beaconPrefab.AddComponent<StupidFuck>();
+            beaconPrefab.AddComponent<HopooGames>();
 
             PrefabAPI.RegisterNetworkPrefab(beaconPrefab);
             ContentAddition.AddNetworkedObject(beaconPrefab);
@@ -80,7 +86,7 @@ namespace CaptainTurretBeacon
 
             genericSkill._skillFamily = newPrimarySkillFamily;
 
-            characterBody.portraitIcon = Main.bundle.LoadAsset<Texture2D>("texCaptainTurretPortait.png");
+            characterBody.portraitIcon = Main.bundle.LoadAsset<Texture2D>("texCaptainTurretPortrait.png");
 
             var redRamp = Addressables.LoadAssetAsync<Texture2D>("d67c887632cd1704ebe3a19486dbe843").WaitForCompletion();
             // guid is 
@@ -93,6 +99,21 @@ namespace CaptainTurretBeacon
             // guid is mat engi turret
 
             var modelTransform = turretBodyPrefab.GetComponent<ModelLocator>()._modelTransform;
+
+            var hurtBoxGroup = modelTransform.GetComponent<HurtBoxGroup>();
+            var firstHurtBox = hurtBoxGroup.hurtBoxes[0];
+            var secondHurtBox = hurtBoxGroup.hurtBoxes[0];
+
+            Array.Resize(ref hurtBoxGroup.hurtBoxes, 0);
+
+            UnityEngine.Object.Destroy(firstHurtBox.GetComponent<HurtBox>());
+            UnityEngine.Object.Destroy(secondHurtBox.GetComponent<HurtBox>());
+
+            hurtBoxGroup.mainHurtBox = null;
+
+            UnityEngine.Object.Destroy(modelTransform.GetComponent<HurtBoxGroup>());
+
+            // remove hurtboxes to prevent ai from targetting it 
 
             // var engiTurretMesh = Addressables.LoadAssetAsync<Mesh>("RoR2/Base/Engi/mdlEngiTurret.fbx").WaitForCompletion();
             // var engiTurretMesh = Addressables.LoadAssetAsync<Mesh>("RoR2/Base/Engi/EngiTurret/EngiTurretMesh.asset").WaitForCompletion();
